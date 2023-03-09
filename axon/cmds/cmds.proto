@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+option go_package = "./cmds";
+
+service AgentManager {
+  rpc RunEchoCommand (EchoCommandRequest) returns (EchoCommandResponse) {}
+  rpc RunShellCommand (ShellCommandRequest) returns (ShellCommandResponse) {}
+  rpc DownloadFile(DownloadFileRequest) returns (DownloadFileResponse) {}
+  rpc UploadFile(UploadFileRequest) returns (UploadFileResponse) {}
+  rpc Screenshot(ScreenshotRequest) returns (ScreenshotResponse) {}
+  rpc GetAgents(GetAgentsRequest) returns (stream AgentInfo) {}
+  rpc StartSocksServer(StartSocksServerRequest) returns (StartSocksServerResponse) {}
+  rpc StopSocksServer(StopSocksServerRequest) returns (StopSocksServerResponse) {}
+}
+
+message CommandRequest {
+  int64 type = 1;
+  oneof req {
+    EchoCommandRequest echo_command_request = 2;
+    ShellCommandRequest shell_command_request = 3;
+    DownloadFileRequest download_file_request = 4;
+    UploadFileRequest upload_file_request = 5;
+    ScreenshotRequest screenshot_request = 6;
+    StartSocksServerRequest start_socks_server_request = 7;
+    StopSocksServerRequest stop_socks_server_request = 8;
+  }
+}
+
+message EchoCommandRequest {
+  int64 agent_id = 1;
+  string data = 2;
+}
+
+message EchoCommandResponse {
+  string data = 1;
+}
+
+message ShellCommandRequest {
+  int64 agent_id = 1;
+  string cmd = 2;
+}
+
+message ShellCommandResponse {
+  string err = 1;
+  bytes data = 2;
+}
+
+message DownloadFileRequest {
+  int64 agent_id = 1;
+  string path = 2;
+}
+
+message DownloadFileResponse {
+  string err = 1;
+  bytes data = 2;
+}
+
+message UploadFileRequest {
+  int64 agent_id = 1;
+  string path = 2;
+  bytes data = 3;
+}
+
+message UploadFileResponse {
+  string err = 1;
+}
+
+message ScreenshotRequest {
+  int64 agent_id = 1;
+}
+
+message ScreenshotResponse {
+  string err = 1;
+  bytes data = 2;
+}
+
+message GetAgentsRequest {
+  bool alive_only = 1;
+}
+
+message StartSocksServerRequest {
+  int64 agent_id = 1;
+}
+
+message StartSocksServerResponse {
+  string addr = 1;
+}
+
+message StopSocksServerRequest {
+  int64 agent_id = 1;
+}
+
+message StopSocksServerResponse {
+}
+
+message AgentInfo {
+  int64 id = 1;
+  bool alive = 2;
+  string connect_time = 3;
+}
